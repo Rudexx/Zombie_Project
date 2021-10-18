@@ -3,14 +3,28 @@ package src.co.edu.unbosque.Model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node {
+public class Node implements  Comparable<Node>{
     private String city;
     private List<Edge> edges;
+    private Boolean seguridad;
+    int first, second;
 
-    public Node(String city) {
+    public Node(String city, Boolean security) {
         edges = new ArrayList<>();
+        seguridad = security;
         this.city = city;
     }
+    public Node( int d , int p ){							//constructor
+        this.first = d;
+        this.second = p;
+    }
+    public int compareTo( Node other){				//es necesario definir un comparador para el correcto funcionamiento del PriorityQueue
+        if( second > other.second ) return 1;
+        if( second == other.second ) return 0;
+        return -1;
+    }
+
+
 
     public String getCity() {
         return city;
@@ -50,6 +64,18 @@ public class Node {
 
     @Override
     public String toString() {
-        return "\n Nombre: " + city + "\n Enlaces: " + edges;
+        return "\n Nombre: " + city + "\n Seguridad: " + seguridad + "\n Enlaces: " + edges;
+    }
+
+    public void setEdges(List<Edge> edges) {
+        this.edges = edges;
+    }
+
+    public Boolean getSeguridad() {
+        return seguridad;
+    }
+
+    public void setSeguridad(Boolean seguridad) {
+        this.seguridad = seguridad;
     }
 }

@@ -142,6 +142,28 @@ public class Archivo {
 	public void setNombresS(ArrayList<String> nombresS) {
 		this.nombresS = nombresS;
 	}
-	
-	
+
+	public ArrayList<String> getEnlacesEntreNodos() {
+		return enlacesEntreNodos;
+	}
+
+	public void setEnlacesEntreNodos(ArrayList<String> enlacesEntreNodos) {
+		this.enlacesEntreNodos = enlacesEntreNodos;
+	}
+
+	public ArrayList<String> getZonaSegura() {
+		return zonaSegura;
+	}
+
+	public void setZonaSegura(ArrayList<String> zonaSegura) {
+		this.zonaSegura = zonaSegura;
+	}
+
+	public String getZonaActual() {
+		return zonaActual;
+	}
+
+	public void setZonaActual(String zonaActual) {
+		this.zonaActual = zonaActual;
+	}
 }
