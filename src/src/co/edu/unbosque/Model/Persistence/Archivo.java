@@ -17,11 +17,9 @@ public class Archivo {
 	private ArrayList<String> enlacesEntreNodos;
 	private ArrayList<String> zonaSegura;
 	private String zonaActual;
+	private int nVertices;
 
-	/**
-	 * Constructor de la clase Archivo. Inicializa la clase
-	 * @param archivo: el archivo que se vaya a utilizar
-	 */
+
 	public void imprimirDatos() {
 		System.out.println("Ciudades: \n");
 		for (int i = 0; i < nombresS.size(); i++) {
@@ -36,7 +34,7 @@ public class Archivo {
 			System.out.println(zonaSegura.get(i));
 		}
 		System.out.println("\nZona Actual: " + zonaActual);
-		
+		System.out.println("\nN° de Ciudades: " + nVertices);
 	}
 	
 	public Archivo(File archivo) {
@@ -92,12 +90,18 @@ public class Archivo {
 					}else if(count != 0 && line.contains("Zonas Seguras")) {
 						System.out.println("aca");
 						zonas = line.split(" ");
-						for (int i = 2; i < zonas.length; i++) {
-							if(!zonas[i].equalsIgnoreCase("–")) {
-							zonaSegura.add(zonas[i]);
+						if(zonas.length > 1) {
+							for (int i = 2; i < zonas.length; i++) {
+								if (!zonas[i].equalsIgnoreCase("–") && !zonas[i].equalsIgnoreCase("-")) {
+									zonaSegura.add(zonas[i]);
+								}
 							}
 						}
-					}else {
+					}else if(line.contains("Ciudades:")){
+						zonas = line.split(" ");
+						nVertices = Integer.parseInt(zonas[1]);
+					}
+					else {
 						zonas = line.split(" ");
 						zonaActual = zonas[1];
 					}
@@ -111,7 +115,7 @@ public class Archivo {
 				}
 		
 				nombresS = nombresSinRepetir;
-				imprimirDatos();
+				//imprimirDatos();
 				scanner.close();
 				
 			} catch (Exception e) {
@@ -165,5 +169,9 @@ public class Archivo {
 
 	public void setZonaActual(String zonaActual) {
 		this.zonaActual = zonaActual;
+	}
+
+	public int getnVertices() {
+		return nVertices;
 	}
 }

@@ -1,150 +1,190 @@
 package src.co.edu.unbosque.Model;
 
+import src.co.edu.unbosque.Model.Node;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GrafoDirigido {
     private List<Node> nodes;
     private Double [][] matrizAdy;
-
-    public  GrafoDirigido(){
-        nodes = new ArrayList<>();
-    }
-
-    public void createAdyMatrix(){
-        matrizAdy = new Double[nodes.size()][nodes.size()];
-        Node n = null;
-        Node n2 = null;
-
-        for(int i=0; i< nodes.size(); i++){
-            for(int j=0; j< nodes.size(); j++){
-                matrizAdy[i][j] = 0.0;
-            }
+    private int n;
+    private int numberOfEdges;
+    private double[] distance;
+    private String[] path;
+    private static int[][] edges;
+    private boolean[] isVisited;
+    public  GrafoDirigido(int n){
+        nodes = new ArrayList<>(n);
+        this.n = n;
+        numberOfEdges=0;
+        edges  = new int[n][n];
+        isVisited = new boolean[n+1];
+        distance = new double[n];
+        for (int i = 0; i <n ; i++) {
+            distance[i] = Double.POSITIVE_INFINITY;
         }
-        for (int i = 0; i < nodes.size(); i++) {
-            n = nodes.get(i);
-            for (int j = 0; j < nodes.size(); j++) {
-                n2 = nodes.get(j);
-                for (int k = 0; k < n.getEdges().size(); k++) {
-                    if(n.getEdges().get(k).getOrigin() == n && n.getEdges().get(k).getDestination() == n2){
-                        matrizAdy[i][j] = n.getEdges().get(k).getDistance();
-                        k = n.getEdges().size();
-                    }
-                }
-            }
+
+        path = new String[n];
+        for (int i = 0; i <n ; i++) {
+            path[i] = "";
         }
     }
 
-    public  Double matrizCaminos(Node n, Node n1) throws Exception
-        {
-            createAdyMatrix();
-            int l = nodes.size();
-            Double [][] P = matrizAdy; // matriz de caminos
-    // Se obtiene la matriz inicial: matriz de adyacencia
 
-    // se obtienen, virtualmente, a partir de P0, las sucesivas
-    // matrices P1, P2, P3 ,..., Pn-1, Pn que es la matriz de caminos
-            for (int k = 0; k < l; k++) {
-                for (int i = 0; i < l; i++) {
-                    for (int j = 0; j < l; j++) {
-                        P[i][j] = Math.min(P[i][j] + P[i][k] * P[k][j], 1);
-                        System.out.println(P[i][j] + " ");
-                    }
-                    System.out.println();
-                }
-            }
-            for (int i = 0; i < nodes.size(); i++) {
-                Node m = nodes.get(i);
-                for (int j = 0; j < nodes.size(); j++) {
-                    Node m2 = nodes.get(j);
-                    if(P[i][j] > 0 && m == n && m2 == n1){
-                        return P[i][j];
-                    }
-                }
-            }
-            return 0.0;
-    }
 
     public void addNode(Node node) {
-        if (nodes == null) {
-            nodes = new ArrayList<>();
-        }
         nodes.add(node);
+
     }
 
-    public List<Node> getNodes() {
-        return nodes;
+    // Imprimir lista de adyacencia
+    public static void showEdges(){
+        for (int[] edse: edges
+        ) {
+            System.out.println(Arrays.toString(edse));
+        }
+
     }
+    // Obtener el número de vértices
+    public  int GetSizeOfGraph(ArrayList<String> Vertax){
+        return nodes.size();
+    }
+
+    // Obtiene el primer vértice adyacente del vértice especificado
+    public int getFirstCO(int index){
+        for (int i = 0; i <nodes.size() ; i++) {
+            if (edges[index][i]>0) return i;
+        }
+        return n;
+    }
+    // Obtiene los vértices adyacentes secuenciales del vértice especificado
+    public int getNextCO(int index,int firstCO){
+        for (int i =firstCO+1 ; i <nodes.size() ; i++) {
+            if (edges[index][i]>0) return i;
+        }
+        return n;
+    }
+    // Agregar borde
+    public  void addEdges(int e1,int e2 , int weight){
+        edges[e1][e2] = weight;
+        //edges[e2][e1] = weight;
+        numberOfEdges++;
+    }
+    // Obtener el número de aristas
+    public int getNumberOfEdges(){
+        return numberOfEdges;
+    }
+
+    public ArrayList<String> dijkStra(int index, ArrayList<String> s ){
+
+        // CO son las coordenadas necesarias para la iteración, headIndex es el vértice inicial de cada DIJKSTRA
+
+
+        int CO;
+        int headIndex = index;
+        ArrayList<String> lista = new ArrayList<>();
+        //
+        // Establece la distancia desde el punto inicial al punto inicial, naturalmente 0
+        distance[index]=0;
+
+
+        // Luego haz lo siguiente para cada vértice
+        // 1. Establece este vértice en conocido, no te preocupes por la distancia y la ruta de este punto, porque ha sido diseñado antes
+        // 2. Encuentra cada vértice adyacente de este vértice. Para un vértice desconocido, compare la distancia alcanzada a lo largo de este vértice con su distancia original, si es menor que la distancia original, actualice la distancia y actualice la ruta
+        // 3. Después de establecer este vértice, use la función indexGet para encontrar el vértice con la distancia más pequeña entre los vértices desconocidos actuales, y utilícelo como el siguiente vértice para realizar el paso 2
+
+        while (!isVisited[headIndex]){
+
+            // CO es la primera CO que no ha sido visitada
+            CO = getFirstCO(headIndex);
+            while(isVisited[CO]){
+                CO = getNextCO(headIndex,CO);
+            }
+
+            // Si el vértice headIndex no tiene vértices adyacentes que no hayan sido visitados, la coordenada del vértice se obtiene como n, lo que indica que es el último nodo desconocido, y solo necesita establecerse como conocido
+            if (CO==n) {
+                isVisited[headIndex]=true;
+                //System.out.println("Coordinate not found ");
+            }
+            // Ejecuta el paso 2 para todos los vértices adyacentes a través de un bucle
+            else {
+                while (!isVisited[CO]&&CO<n) {
+                    isVisited[headIndex]=true;
+                    double currentDis = distance[headIndex]+edges[headIndex][CO];
+                    if (currentDis<distance[CO]) {
+                        distance[CO] = currentDis;
+
+                        path[CO] = path[headIndex]+" "+nodes.get(headIndex).getCity();
+                    }
+
+                    CO = getNextCO(headIndex, CO);
+
+                }
+            }
+
+            headIndex = indexGet(distance,isVisited);
+
+
+        }
+        for (int i = 0; i <n ; i++) {
+            path[i] = path[i]+" "+nodes.get(i).getCity();
+        }
+        System.out.println("Iniciar nodo:"+nodes.get(index).getCity());
+        for (int i = 0; i <n ; i++) {
+            for (int j = 0; j < s.size(); j++) {
+                if(nodes.get(i).getCity().equalsIgnoreCase(s.get(j))){
+                    //System.out.println(nodes.get(i).getCity()+"   "+distance[i]+"   "+path[i]);
+                    lista.add(nodes.get(i).getCity()+" "+distance[i]+" "+path[i]);
+                    j = s.size();
+                }
+
+            }
+
+        }
+        return lista;
+
+
+    }
+    // Devuelve el siguiente vértice requerido a través de la matriz de distancia y la matriz de acceso dadas
+    public int indexGet(double[] distance, boolean[] isVisited){
+        int j=0;
+        double mindis=Double.POSITIVE_INFINITY;
+        for (int i = 0; i < distance.length; i++) {
+            if (!isVisited[i]){
+                if(distance[i]<mindis){
+                    mindis=distance[i];
+                    j=i;
+                }
+            }
+        }
+        return j;
+    }
+
 
     @Override
     public String toString() {
         return " Nodos:\n" + nodes;
     }
 
-    public String returnNodeNames(int i){
-        return nodes.get(i).getCity();
-    }
-
-    public Boolean deleteNode(String nombre){
-        Node eliminar = searchNode(nombre);
-        if(eliminar != null){
-            deleteEdges(eliminar);
-            nodes.remove(eliminar);
-            return true;
-        }
-        return false;
-    }
-
-    public void deleteEdges(Node n){
-        for (int i = 0; i < nodes.size(); i++) {
-            for (int j = 0; j < nodes.get(i).getEdges().size(); j++) {
-                if(nodes.get(i).getEdges() != null) {
-                    if (nodes.get(i).getEdges().get(j).getOrigin() == n ||
-                            nodes.get(i).getEdges().get(j).getDestination() == n) {
-                        nodes.get(i).getEdges().remove(nodes.get(i).getEdges().get(j));
-                    }
-                }
-            }
-        }
-    }
-
-    public void deleteOneEdge(String name){
-        String nodo1 = name.split(" ")[1];
-        String nodo2 = name.split(" ")[3];
-
+    public int searchNodePosition(String city){
 
         for (int i = 0; i < nodes.size(); i++) {
-            if(nodes.get(i).getCity().equalsIgnoreCase(nodo1)){
-                for (int j = 0; j < nodes.get(i).getEdges().size(); j++) {
-                    if(nodes.get(i).getEdges().get(j).getOrigin().getCity().equalsIgnoreCase(nodo1)
-                    && nodes.get(i).getEdges().get(j).getDestination().getCity().equalsIgnoreCase(nodo2));
-                    nodes.get(i).getEdges().remove(nodes.get(i).getEdges().get(j));
-                }
+            if(nodes.get(i).getCity().equalsIgnoreCase(city)){
+                return i;
             }
         }
 
+        return -1;
     }
 
-    public String getEdges(int i, int j){
-        String resultado = "";
-        if(nodes.get(i).getEdges()!= null){
-            resultado = "Origen: "+nodes.get(i).getEdges().get(j).getOrigin().getCity() + " Destinacion: " +
-                nodes.get(i).getEdges().get(j).getDestination().getCity();
-        }
 
-        return resultado;
-    }
-    public int countEdges(){
-        int contador = 0;
-        for (int i = 0; i < nodes.size() ; i++) {
-            if(nodes.get(i).getEdges() != null){
-                for (int j = 0; j < nodes.get(i).getEdges().size(); j++) {
-                    contador++;
-                }
-            }
-        }
-        return contador;
-    }
+
+
+
+
+
 
     public Node searchNode(String name){
         for (int i = 0; i < nodes.size() ; i++) {
@@ -155,94 +195,7 @@ public class GrafoDirigido {
         return null;
     }
 
-    public String showPaths(){
 
-        createAdyMatrix();
-        String resultado = "";
-
-        for (int i = 0; i <matrizAdy.length ; i++) {
-            for (int j = 0; j < matrizAdy.length ; j++) {
-                resultado = resultado + matrizAdy[i][j] + " ";
-            }
-            resultado = resultado + "\n";
-        }
-
-        return resultado;
-    }
-
-    public String searchShorterPath(){
-        createAdyMatrix();
-        int vertices = matrizAdy.length;
-        Double matrizAdyacencia [][] = matrizAdy;
-        String caminos [][] = new String[vertices][vertices];
-        String caminosAuxiliares[][] = new String[vertices][vertices];
-        String caminoRecorrido = "", cadena = "", caminitos="";
-        int i,j,k;
-        Double temporal1, temporal2, temporal3, temporal4, minimo;
-        for (i = 0; i <vertices ; i++) {
-            for (j = 0; j <vertices ; j++) {
-                caminos[i][j] = "";
-                caminosAuxiliares[i][j] = "";
-            }
-            for (k = 0; k <vertices ; k++) {
-                for (i = 0; i <vertices ; i++) {
-                    temporal1 = matrizAdyacencia[i][j];
-                    temporal2 = matrizAdyacencia[i][k];
-                    temporal3 = matrizAdyacencia[k][j];
-                    temporal4 = temporal2 + temporal3;
-
-                    minimo = Math.min(temporal1, temporal4);
-                    if(temporal1 != temporal4){
-                        if(minimo == temporal4){
-                            caminoRecorrido = "";
-                            caminosAuxiliares[i][j] = k + "";
-                            caminos[i][j] = caminosR(i,k,caminosAuxiliares, caminoRecorrido)
-                            + (k+1);
-                        }
-                    }
-                    matrizAdyacencia[i][j]= (Double) minimo;
-
-                }
-            }
-        }
-        //camino minimo a cadena
-        for (i = 0; i <vertices ; i++) {
-            for (j = 0; j < vertices; j++) {
-               cadena = cadena+"[" + matrizAdyacencia[i][j]+ "]";
-            }
-            cadena = cadena + "\n";
-        }
-        for (i = 0; i <vertices ; i++) {
-            for (j = 0; j < vertices; j++) {
-               if(matrizAdyacencia[i][j] != 1000000000){
-                   if(i!=j){
-                       if(caminos[i][j].equalsIgnoreCase("")){
-                           caminitos += "De (" + (i+1) + "--->" + (j+1) +
-                                   ") Irse Por...(" + (i+1)+ ", "+ (j+1)+")\n";
-                       }else{
-                           caminitos += "De (" + (i+1) + "--->" + (j+1) +
-                                   ") Irse Por...("+ (i+1) + ", " + (j+1) + ")\n";
-                       }
-                   }
-               }
-            }
-        }
-        return "La matriz de Caminos" +
-                " Mas Cortos Entre Los diferentes Vertices eS:\n" + cadena +
-                "\nLos diferentes Caminos Mas Cortos Entre Vertices son:\n" + caminitos;
-    }
-    public String caminosR(int i, int k,
-                           String[][] caminosAuxiliares, String caminoRecorrido){
-        if(caminosAuxiliares[i][k].equals("")){
-            return "";
-        }else{
-            ///Recursividad al Millon
-            caminoRecorrido +=caminosR(i, Integer.parseInt(caminosAuxiliares[i][k].toString()),
-                    caminosAuxiliares, caminoRecorrido) +
-                    (Integer.parseInt(caminosAuxiliares[i][k].toString())+1) + ", ";
-            return caminoRecorrido;
-        }
-    }
 
 
 
