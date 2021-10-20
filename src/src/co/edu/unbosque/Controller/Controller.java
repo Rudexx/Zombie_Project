@@ -2,9 +2,13 @@ package src.co.edu.unbosque.Controller;
 
 
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Scanner;
 
 import javax.swing.JFileChooser;
 
@@ -25,10 +29,10 @@ public class Controller {
 
     public  Controller() {
 		view = new View();
-
+		view.mostrarInformacion("Vienvenido a The zombie Project","Inicio",2);
     	JFileChooser fileChooser = new JFileChooser();
     	fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "/Desktop"));
-    	
+		view.mostrarInformacion("Por favor seleccione el archivo txt MiColombia.in ","Ingrese",2);
 		int result = fileChooser.showOpenDialog(null);
 		if (result == JFileChooser.APPROVE_OPTION) {
 		    // user selects a file
@@ -44,6 +48,7 @@ public class Controller {
     }
 
     public void run() {
+
     	ArrayList<String> lista = file.getNombresS();
 
 		for (int i = 0; i < lista.size(); i++) {
@@ -69,7 +74,7 @@ public class Controller {
 		}
 		String zonaActual = file.getZonaActual();
 		String info = grafo.toString();
-		view.mostrarInformacion(info, "Información del grafo", 1);
+		//view.mostrarInformacion(info, "Información del grafo", 1);
 		ArrayList<String> listaFinal = grafo.dijkStra(grafo.searchNodePosition(zonaActual), lista);
 		ArrayList<Double> pesos = new ArrayList<>();
 		String ruta = "";
@@ -100,14 +105,41 @@ public class Controller {
 				}
 			}
 		}
+		String mesage;
 		if(!ruta.equals("") && min != Double.POSITIVE_INFINITY){
-			System.out.println("La ruta mas corta tiene un peso de: " + min
+			mesage=("La ruta mas corta tiene un peso de: " + min
 					+ "\nLa ruta es la siguiente: " + ruta);
+			System.out.println(mesage);
 		}else{
-			System.out.println("Estas perdido");
+			mesage="Lo siento socio, no es posible llegar a una ciudad segura";
+			System.out.println(mesage);
 		}
+		//view.mostrarInformacion(mesage,"Respuesta",2);
+		view.mostrarInformacion("Por Favor seleccione la ruta en donde desea generar el " +
+				"archivo respuest.out con la respuesta del programa","GenerarRespuesta",2);
 
 
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.showOpenDialog(fileChooser);
+
+			String ruta1 = fileChooser.getSelectedFile().getAbsolutePath();
+			File f = new File(ruta1);
+		try {
+			String ruta2 = ruta1+".txt";
+			String contenido = mesage;
+			File file = new File(ruta2);
+			// Si el archivo no existe es creado
+			if (!file.exists()) {
+				file.createNewFile();
+				System.out.println("Archivo creado exitosamente en "+ruta1);
+			}
+			FileWriter fw = new FileWriter(file);
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(contenido);
+			bw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 
 	}
