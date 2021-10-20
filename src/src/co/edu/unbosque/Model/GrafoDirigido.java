@@ -1,7 +1,6 @@
 package src.co.edu.unbosque.Model;
 
 import src.co.edu.unbosque.Model.Node;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +14,7 @@ public class GrafoDirigido {
     private String[] path;
     private static int[][] edges;
     private boolean[] isVisited;
+
     public  GrafoDirigido(int n){
         nodes = new ArrayList<>(n);
         this.n = n;
@@ -22,6 +22,7 @@ public class GrafoDirigido {
         edges  = new int[n][n];
         isVisited = new boolean[n+1];
         distance = new double[n];
+
         for (int i = 0; i <n ; i++) {
             distance[i] = Double.POSITIVE_INFINITY;
         }

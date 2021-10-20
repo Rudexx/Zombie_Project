@@ -1,7 +1,5 @@
 package src.co.edu.unbosque.Controller;
 
-
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -107,8 +105,8 @@ public class Controller {
 		}
 		String mesage;
 		if(!ruta.equals("") && min != Double.POSITIVE_INFINITY){
-			mesage=("La ruta mas corta tiene un peso de: " + min
-					+ "\nLa ruta es la siguiente: " + ruta);
+			mesage=("My little doggy, la ruta hacia la zona segura es: "+ruta+
+					" con una distancia de: " + min);
 			System.out.println(mesage);
 		}else{
 			mesage="Lo siento socio, no es posible llegar a una ciudad segura";
@@ -125,7 +123,7 @@ public class Controller {
 			String ruta1 = fileChooser.getSelectedFile().getAbsolutePath();
 			File f = new File(ruta1);
 		try {
-			String ruta2 = ruta1+".txt";
+			String ruta2 = ruta1;
 			String contenido = mesage;
 			File file = new File(ruta2);
 			// Si el archivo no existe es creado
@@ -140,7 +138,6 @@ public class Controller {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 
 	}
 
