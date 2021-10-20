@@ -88,7 +88,6 @@ public class Archivo {
 						nombres.add(enlaces[2]);
 						enlacesEntreNodos.add(enlaces[0] + " " + enlaces[2] + " " + enlaces[3]);
 					}else if(count != 0 && line.contains("Zonas Seguras")) {
-						System.out.println("aca");
 						zonas = line.split(" ");
 						if(zonas.length > 1) {
 							for (int i = 2; i < zonas.length; i++) {
